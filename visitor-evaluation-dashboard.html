@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نموذج تقييم تجربة الزائر</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Tajawal, Arial, sans-serif; background: #eaf5ee; color: #1a2e1e; direction: rtl; }
+
+/* ── HIDE ALL RADIO INPUTS ── */
+input[type="radio"] { display: none; }
+
+/* ── HEADER ── */
+.header { background: linear-gradient(135deg,#0f5226,#1a7a3c,#2ecc71); padding: 24px 20px; text-align: center; }
+.header h1 { font-family: Cairo, Arial, sans-serif; font-size: 1.6rem; font-weight: 900; color: #fff; }
+.header p { color: rgba(255,255,255,0.85); font-size: 0.9rem; margin-top: 4px; }
+
+/* ── INFO SECTION ── */
+.info-section { background: #fff; border-bottom: 3px solid #1a7a3c; padding: 16px; }
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.info-field { display: flex; flex-direction: column; gap: 4px; }
+.info-field span { font-size: 0.72rem; font-weight: 700; color: #0f5226; }
+.info-field input, .info-field select {
+  border: 1.5px solid #b2dfc0; border-radius: 8px; padding: 8px 10px;
+  font-family: Tajawal, Arial, sans-serif; font-size: 0.9rem;
+  background: #f4fbf6; direction: rtl; width: 100%;
+  -webkit-appearance: none; appearance: none;
+}
+
+/* ── LAYOUT ── */
+.page-body { padding: 12px; }
+
+/* ── JS COUNTERS FOR LIVE STATS ── */
+
+/* ── STATS BOX ── */
+.stats-box {
+  background: #fff; border-radius: 12px; border: 1.5px solid #c8e6c9;
+  overflow: hidden; margin-bottom: 16px;
+}
+.box-hdr {
+  background: linear-gradient(135deg,#0f5226,#1a7a3c,#2ecc71);
+  padding: 12px 16px; color: #fff; font-weight: 700; font-size: 0.95rem; text-align: center;
+}
+.stats-body { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+
+.stat-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-radius: 10px; }
+.stat-row.g { background: #d4edda; }
+.stat-row.r { background: #fde8e6; }
+.stat-row.y { background: #fff3cd; }
+.stat-lbl { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.88rem; }
+.stat-ico { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; }
+.ico-g { background: #28a745; color: #fff; }
+.ico-r { background: #c0392b; color: #fff; }
+.ico-y { background: #e6a817; color: #fff; }
+
+/* The live counter numbers */
+.stat-num { font-size: 1.4rem; font-weight: 900; font-family: Cairo, Arial, sans-serif; }
+.num-g { color: #0f5226; }
+.num-r { color: #c0392b; }
+.num-y { color: #e6a817; }
+
+.pct-note {
+  text-align: center; font-size: 0.85rem; color: #555;
+  background: #f4fbf6; border-radius: 8px; padding: 10px;
+  line-height: 1.5;
+}
+.pct-note strong { color: #0f5226; font-size: 1.1rem; }
+.pct-bar-wrap { background: #e0e0e0; border-radius: 8px; height: 12px; overflow: hidden; margin-top: 6px; }
+.pct-bar-fill { height: 100%; background: linear-gradient(90deg, #28a745, #1a7a3c); border-radius: 8px; transition: width 0.3s ease; width: 0%; }
+
+.btn-print {
+  background: linear-gradient(135deg,#0f5226,#1a7a3c); color: #fff; border: none;
+  border-radius: 10px; padding: 12px; font-family: Tajawal, Arial, sans-serif;
+  font-size: 0.95rem; font-weight: 700; cursor: pointer; width: 100%;
+  -webkit-appearance: none;
+}
+
+/* ── STAGE HEADER ── */
+.stage-hdr {
+  background: #1a7a3c; color: #fff; font-weight: 800; font-size: 0.9rem;
+  padding: 10px 14px; border-radius: 8px; margin: 16px 0 8px 0;
+}
+
+/* ── CRITERION CARD ── */
+.criterion-card {
+  background: #fff; border-radius: 10px; border: 1px solid #d4edda;
+  margin-bottom: 8px; padding: 12px;
+}
+.card-top { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 10px; }
+.card-num {
+  min-width: 26px; height: 26px; border-radius: 50%;
+  background: #1a7a3c; color: #fff; font-size: 0.75rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+}
+.card-section { font-size: 0.68rem; color: #888; margin-bottom: 3px; }
+.card-text { font-size: 0.83rem; line-height: 1.55; color: #1a2e1e; }
+
+/* ── TICK LABELS (the visible buttons) ── */
+.tick-row { display: flex; gap: 8px; margin-bottom: 10px; }
+
+.tick-lbl {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  border-radius: 8px;
+  border: 2px solid #ccc;
+  background: #f9f9f9;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #aaa;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.tick-lbl.yes { border-color: #28a745; background: #f4fbf6; color: #28a745; }
+.tick-lbl.no  { border-color: #e57373; background: #fff8f8; color: #c0392b; }
+.tick-lbl.na  { border-color: #f0c040; background: #fffdf0; color: #b8860b; }
+
+/* When the corresponding radio is checked, highlight the label */
+/* Each radio id is like r1-yes, r1-no, r1-na */
+/* The label for= ties them together */
+
+/* YES checked → highlight yes label for that row */
+#r1-yes:checked  ~ #c1  .tick-lbl.yes,
+#r2-yes:checked  ~ #c2  .tick-lbl.yes,
+#r3-yes:checked  ~ #c3  .tick-lbl.yes,
+#r4-yes:checked  ~ #c4  .tick-lbl.yes,
+#r5-yes:checked  ~ #c5  .tick-lbl.yes,
+#r6-yes:checked  ~ #c6  .tick-lbl.yes,
+#r7-yes:checked  ~ #c7  .tick-lbl.yes,
+#r8-yes:checked  ~ #c8  .tick-lbl.yes,
+#r9-yes:checked  ~ #c9  .tick-lbl.yes,
+#r10-yes:checked ~ #c10 .tick-lbl.yes,
+#r11-yes:checked ~ #c11 .tick-lbl.yes,
+#r12-yes:checked ~ #c12 .tick-lbl.yes,
+#r13-yes:checked ~ #c13 .tick-lbl.yes,
+#r14-yes:checked ~ #c14 .tick-lbl.yes,
+#r15-yes:checked ~ #c15 .tick-lbl.yes,
+#r16-yes:checked ~ #c16 .tick-lbl.yes,
+#r17-yes:checked ~ #c17 .tick-lbl.yes,
+#r18-yes:checked ~ #c18 .tick-lbl.yes,
+#r19-yes:checked ~ #c19 .tick-lbl.yes,
+#r20-yes:checked ~ #c20 .tick-lbl.yes,
+#r21-yes:checked ~ #c21 .tick-lbl.yes,
+#r22-yes:checked ~ #c22 .tick-lbl.yes,
+#r23-yes:checked ~ #c23 .tick-lbl.yes,
+#r24-yes:checked ~ #c24 .tick-lbl.yes,
+#r25-yes:checked ~ #c25 .tick-lbl.yes,
+#r26-yes:checked ~ #c26 .tick-lbl.yes,
+#r27-yes:checked ~ #c27 .tick-lbl.yes,
+#r28-yes:checked ~ #c28 .tick-lbl.yes,
+#r29-yes:checked ~ #c29 .tick-lbl.yes,
+#r30-yes:checked ~ #c30 .tick-lbl.yes,
+#r31-yes:checked ~ #c31 .tick-lbl.yes,
+#r32-yes:checked ~ #c32 .tick-lbl.yes,
+#r33-yes:checked ~ #c33 .tick-lbl.yes,
+#r34-yes:checked ~ #c34 .tick-lbl.yes,
+#r35-yes:checked ~ #c35 .tick-lbl.yes,
+#r36-yes:checked ~ #c36 .tick-lbl.yes,
+#r37-yes:checked ~ #c37 .tick-lbl.yes,
+#r38-yes:checked ~ #c38 .tick-lbl.yes,
+#r39-yes:checked ~ #c39 .tick-lbl.yes,
+#r40-yes:checked ~ #c40 .tick-lbl.yes,
+#r41-yes:checked ~ #c41 .tick-lbl.yes,
+#r42-yes:checked ~ #c42 .tick-lbl.yes,
+#r43-yes:checked ~ #c43 .tick-lbl.yes
+{ background: #28a745; border-color: #0f5226; color: #fff; }
+
+#r1-no:checked  ~ #c1  .tick-lbl.no,
+#r2-no:checked  ~ #c2  .tick-lbl.no,
+#r3-no:checked  ~ #c3  .tick-lbl.no,
+#r4-no:checked  ~ #c4  .tick-lbl.no,
+#r5-no:checked  ~ #c5  .tick-lbl.no,
+#r6-no:checked  ~ #c6  .tick-lbl.no,
+#r7-no:checked  ~ #c7  .tick-lbl.no,
+#r8-no:checked  ~ #c8  .tick-lbl.no,
+#r9-no:checked  ~ #c9  .tick-lbl.no,
+#r10-no:checked ~ #c10 .tick-lbl.no,
+#r11-no:checked ~ #c11 .tick-lbl.no,
+#r12-no:checked ~ #c12 .tick-lbl.no,
+#r13-no:checked ~ #c13 .tick-lbl.no,
+#r14-no:checked ~ #c14 .tick-lbl.no,
+#r15-no:checked ~ #c15 .tick-lbl.no,
+#r16-no:checked ~ #c16 .tick-lbl.no,
+#r17-no:checked ~ #c17 .tick-lbl.no,
+#r18-no:checked ~ #c18 .tick-lbl.no,
+#r19-no:checked ~ #c19 .tick-lbl.no,
+#r20-no:checked ~ #c20 .tick-lbl.no,
+#r21-no:checked ~ #c21 .tick-lbl.no,
+#r22-no:checked ~ #c22 .tick-lbl.no,
+#r23-no:checked ~ #c23 .tick-lbl.no,
+#r24-no:checked ~ #c24 .tick-lbl.no,
+#r25-no:checked ~ #c25 .tick-lbl.no,
+#r26-no:checked ~ #c26 .tick-lbl.no,
+#r27-no:checked ~ #c27 .tick-lbl.no,
+#r28-no:checked ~ #c28 .tick-lbl.no,
+#r29-no:checked ~ #c29 .tick-lbl.no,
+#r30-no:checked ~ #c30 .tick-lbl.no,
+#r31-no:checked ~ #c31 .tick-lbl.no,
+#r32-no:checked ~ #c32 .tick-lbl.no,
+#r33-no:checked ~ #c33 .tick-lbl.no,
+#r34-no:checked ~ #c34 .tick-lbl.no,
+#r35-no:checked ~ #c35 .tick-lbl.no,
+#r36-no:checked ~ #c36 .tick-lbl.no,
+#r37-no:checked ~ #c37 .tick-lbl.no,
+#r38-no:checked ~ #c38 .tick-lbl.no,
+#r39-no:checked ~ #c39 .tick-lbl.no,
+#r40-no:checked ~ #c40 .tick-lbl.no,
+#r41-no:checked ~ #c41 .tick-lbl.no,
+#r42-no:checked ~ #c42 .tick-lbl.no,
+#r43-no:checked ~ #c43 .tick-lbl.no
+{ background: #c0392b; border-color: #922b21; color: #fff; }
+
+#r1-na:checked  ~ #c1  .tick-lbl.na,
+#r2-na:checked  ~ #c2  .tick-lbl.na,
+#r3-na:checked  ~ #c3  .tick-lbl.na,
+#r4-na:checked  ~ #c4  .tick-lbl.na,
+#r5-na:checked  ~ #c5  .tick-lbl.na,
+#r6-na:checked  ~ #c6  .tick-lbl.na,
+#r7-na:checked  ~ #c7  .tick-lbl.na,
+#r8-na:checked  ~ #c8  .tick-lbl.na,
+#r9-na:checked  ~ #c9  .tick-lbl.na,
+#r10-na:checked ~ #c10 .tick-lbl.na,
+#r11-na:checked ~ #c11 .tick-lbl.na,
+#r12-na:checked ~ #c12 .tick-lbl.na,
+#r13-na:checked ~ #c13 .tick-lbl.na,
+#r14-na:checked ~ #c14 .tick-lbl.na,
+#r15-na:checked ~ #c15 .tick-lbl.na,
+#r16-na:checked ~ #c16 .tick-lbl.na,
+#r17-na:checked ~ #c17 .tick-lbl.na,
+#r18-na:checked ~ #c18 .tick-lbl.na,
+#r19-na:checked ~ #c19 .tick-lbl.na,
+#r20-na:checked ~ #c20 .tick-lbl.na,
+#r21-na:checked ~ #c21 .tick-lbl.na,
+#r22-na:checked ~ #c22 .tick-lbl.na,
+#r23-na:checked ~ #c23 .tick-lbl.na,
+#r24-na:checked ~ #c24 .tick-lbl.na,
+#r25-na:checked ~ #c25 .tick-lbl.na,
+#r26-na:checked ~ #c26 .tick-lbl.na,
+#r27-na:checked ~ #c27 .tick-lbl.na,
+#r28-na:checked ~ #c28 .tick-lbl.na,
+#r29-na:checked ~ #c29 .tick-lbl.na,
+#r30-na:checked ~ #c30 .tick-lbl.na,
+#r31-na:checked ~ #c31 .tick-lbl.na,
+#r32-na:checked ~ #c32 .tick-lbl.na,
+#r33-na:checked ~ #c33 .tick-lbl.na,
+#r34-na:checked ~ #c34 .tick-lbl.na,
+#r35-na:checked ~ #c35 .tick-lbl.na,
+#r36-na:checked ~ #c36 .tick-lbl.na,
+#r37-na:checked ~ #c37 .tick-lbl.na,
+#r38-na:checked ~ #c38 .tick-lbl.na,
+#r39-na:checked ~ #c39 .tick-lbl.na,
+#r40-na:checked ~ #c40 .tick-lbl.na,
+#r41-na:checked ~ #c41 .tick-lbl.na,
+#r42-na:checked ~ #c42 .tick-lbl.na,
+#r43-na:checked ~ #c43 .tick-lbl.na
+{ background: #e6a817; border-color: #b8860b; color: #fff; }
+
+/* ── NOTE FIELDS ── */
+.notes-row { display: flex; gap: 8px; }
+.note-wrap { flex: 1; display: flex; flex-direction: column; }
+.note-lbl { font-size: 0.65rem; color: #888; margin-bottom: 2px; }
+.notes-row textarea {
+  flex: 1; border: 1.5px solid #b2dfc0; border-radius: 6px; padding: 6px 8px;
+  font-family: Tajawal, Arial, sans-serif; font-size: 0.75rem; direction: rtl;
+  resize: none; min-height: 48px; -webkit-appearance: none; appearance: none;
+}
+.obs-ta { background: #f0f8ff; border-color: #aac4e0; }
+.imp-ta { background: #fdf5ff; border-color: #d5b0e8; }
+
+@media (min-width: 860px) {
+  .info-grid { grid-template-columns: repeat(4,1fr); }
+  .page-body { display: flex; gap: 20px; align-items: flex-start; padding: 20px; }
+  .stats-box { min-width: 250px; max-width: 250px; position: sticky; top: 16px; margin-bottom: 0; }
+  .criteria-col { flex: 1; }
+  .header h1 { font-size: 2rem; }
+}
+
+.page-body-stats { padding: 12px; }
+.page-body-cards { padding: 0 12px 12px; }
+@media (min-width: 860px) {
+  .page-body-stats { padding: 20px 20px 0; }
+  .page-body-cards { padding: 0 20px 20px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>نموذج تقييم تجربة الزائر</h1>
+  <p>Visitor Experience Evaluation Form</p>
+</div>
+
+<div class="info-section">
+  <div class="info-grid">
+    <div class="info-field"><span>إسم الموقع</span><input type="text" placeholder="أدخل اسم الموقع..."></div>
+    <div class="info-field"><span>نوع الموقع</span><input type="text" placeholder="أدخل نوع الموقع..."></div>
+    <div class="info-field"><span>تاريخ الزيارة</span><input type="date"></div>
+    <div class="info-field"><span>الوقت</span><input type="text" placeholder="09:00 - 12:00"></div>
+    <div class="info-field"><span>الطقس</span><input type="text" placeholder="مشمس / 28°"></div>
+    <div class="info-field"><span>مستوى الازدحام</span>
+      <select><option value="">اختر...</option><option>منخفض</option><option>متوسط</option><option>مرتفع</option></select>
+    </div>
+    <div class="info-field"><span>اسم المقيم</span><input type="text" placeholder="أدخل اسم المقيم..."></div>
+  </div>
+</div>
+
+<!-- ALL 129 RADIO INPUTS MUST BE SIBLINGS OF .cards FOR CSS ~ SELECTOR TO WORK -->
+<!-- STATS BOX (outside form-wrap, no sibling selector needed) -->
+<div class="page-body-stats">
+<div class="stats-box">
+    <div class="box-hdr">⬡ نتائج التقييم</div>
+    <div class="stats-body">
+      <div class="pct-note">
+        <strong id="pct-display">— %</strong><br>
+        <span style="font-size:0.78rem;color:#777;">نسبة الامتثال (نعم من نعم+لا)</span>
+        <div class="pct-bar-wrap"><div class="pct-bar-fill" id="pct-bar"></div></div>
+      </div>
+      <div class="stat-row g">
+        <div class="stat-lbl"><div class="stat-ico ico-g">✓</div><span>نعم: متوفر</span></div>
+        <div class="stat-num num-g" id="cnt-yes">0</div>
+      </div>
+      <div class="stat-row r">
+        <div class="stat-lbl"><div class="stat-ico ico-r">✗</div><span>لا: غير متوفر</span></div>
+        <div class="stat-num num-r" id="cnt-no">0</div>
+      </div>
+      <div class="stat-row y">
+        <div class="stat-lbl"><div class="stat-ico ico-y">—</div><span>لا ينطبق</span></div>
+        <div class="stat-num num-y" id="cnt-na">0</div>
+      </div>
+      <button class="btn-print" onclick="window.print()">🖨️ طباعة / تصدير</button>
+    </div>
+  </div>
+</div>
+
+<!-- FORM WRAP: radio inputs + cards are direct siblings so CSS ~ selector works -->
+<div class="form-wrap page-body-cards">
+
+<input type="radio" id="r1-yes"  name="r1"  value="yes">
+<input type="radio" id="r1-no"   name="r1"  value="no">
+<input type="radio" id="r1-na"   name="r1"  value="na">
+<input type="radio" id="r2-yes"  name="r2"  value="yes">
+<input type="radio" id="r2-no"   name="r2"  value="no">
+<input type="radio" id="r2-na"   name="r2"  value="na">
+<input type="radio" id="r3-yes"  name="r3"  value="yes">
+<input type="radio" id="r3-no"   name="r3"  value="no">
+<input type="radio" id="r3-na"   name="r3"  value="na">
+<input type="radio" id="r4-yes"  name="r4"  value="yes">
+<input type="radio" id="r4-no"   name="r4"  value="no">
+<input type="radio" id="r4-na"   name="r4"  value="na">
+<input type="radio" id="r5-yes"  name="r5"  value="yes">
+<input type="radio" id="r5-no"   name="r5"  value="no">
+<input type="radio" id="r5-na"   name="r5"  value="na">
+<input type="radio" id="r6-yes"  name="r6"  value="yes">
+<input type="radio" id="r6-no"   name="r6"  value="no">
+<input type="radio" id="r6-na"   name="r6"  value="na">
+<input type="radio" id="r7-yes"  name="r7"  value="yes">
+<input type="radio" id="r7-no"   name="r7"  value="no">
+<input type="radio" id="r7-na"   name="r7"  value="na">
+<input type="radio" id="r8-yes"  name="r8"  value="yes">
+<input type="radio" id="r8-no"   name="r8"  value="no">
+<input type="radio" id="r8-na"   name="r8"  value="na">
+<input type="radio" id="r9-yes"  name="r9"  value="yes">
+<input type="radio" id="r9-no"   name="r9"  value="no">
+<input type="radio" id="r9-na"   name="r9"  value="na">
+<input type="radio" id="r10-yes" name="r10" value="yes">
+<input type="radio" id="r10-no"  name="r10" value="no">
+<input type="radio" id="r10-na"  name="r10" value="na">
+<input type="radio" id="r11-yes" name="r11" value="yes">
+<input type="radio" id="r11-no"  name="r11" value="no">
+<input type="radio" id="r11-na"  name="r11" value="na">
+<input type="radio" id="r12-yes" name="r12" value="yes">
+<input type="radio" id="r12-no"  name="r12" value="no">
+<input type="radio" id="r12-na"  name="r12" value="na">
+<input type="radio" id="r13-yes" name="r13" value="yes">
+<input type="radio" id="r13-no"  name="r13" value="no">
+<input type="radio" id="r13-na"  name="r13" value="na">
+<input type="radio" id="r14-yes" name="r14" value="yes">
+<input type="radio" id="r14-no"  name="r14" value="no">
+<input type="radio" id="r14-na"  name="r14" value="na">
+<input type="radio" id="r15-yes" name="r15" value="yes">
+<input type="radio" id="r15-no"  name="r15" value="no">
+<input type="radio" id="r15-na"  name="r15" value="na">
+<input type="radio" id="r16-yes" name="r16" value="yes">
+<input type="radio" id="r16-no"  name="r16" value="no">
+<input type="radio" id="r16-na"  name="r16" value="na">
+<input type="radio" id="r17-yes" name="r17" value="yes">
+<input type="radio" id="r17-no"  name="r17" value="no">
+<input type="radio" id="r17-na"  name="r17" value="na">
+<input type="radio" id="r18-yes" name="r18" value="yes">
+<input type="radio" id="r18-no"  name="r18" value="no">
+<input type="radio" id="r18-na"  name="r18" value="na">
+<input type="radio" id="r19-yes" name="r19" value="yes">
+<input type="radio" id="r19-no"  name="r19" value="no">
+<input type="radio" id="r19-na"  name="r19" value="na">
+<input type="radio" id="r20-yes" name="r20" value="yes">
+<input type="radio" id="r20-no"  name="r20" value="no">
+<input type="radio" id="r20-na"  name="r20" value="na">
+<input type="radio" id="r21-yes" name="r21" value="yes">
+<input type="radio" id="r21-no"  name="r21" value="no">
+<input type="radio" id="r21-na"  name="r21" value="na">
+<input type="radio" id="r22-yes" name="r22" value="yes">
+<input type="radio" id="r22-no"  name="r22" value="no">
+<input type="radio" id="r22-na"  name="r22" value="na">
+<input type="radio" id="r23-yes" name="r23" value="yes">
+<input type="radio" id="r23-no"  name="r23" value="no">
+<input type="radio" id="r23-na"  name="r23" value="na">
+<input type="radio" id="r24-yes" name="r24" value="yes">
+<input type="radio" id="r24-no"  name="r24" value="no">
+<input type="radio" id="r24-na"  name="r24" value="na">
+<input type="radio" id="r25-yes" name="r25" value="yes">
+<input type="radio" id="r25-no"  name="r25" value="no">
+<input type="radio" id="r25-na"  name="r25" value="na">
+<input type="radio" id="r26-yes" name="r26" value="yes">
+<input type="radio" id="r26-no"  name="r26" value="no">
+<input type="radio" id="r26-na"  name="r26" value="na">
+<input type="radio" id="r27-yes" name="r27" value="yes">
+<input type="radio" id="r27-no"  name="r27" value="no">
+<input type="radio" id="r27-na"  name="r27" value="na">
+<input type="radio" id="r28-yes" name="r28" value="yes">
+<input type="radio" id="r28-no"  name="r28" value="no">
+<input type="radio" id="r28-na"  name="r28" value="na">
+<input type="radio" id="r29-yes" name="r29" value="yes">
+<input type="radio" id="r29-no"  name="r29" value="no">
+<input type="radio" id="r29-na"  name="r29" value="na">
+<input type="radio" id="r30-yes" name="r30" value="yes">
+<input type="radio" id="r30-no"  name="r30" value="no">
+<input type="radio" id="r30-na"  name="r30" value="na">
+<input type="radio" id="r31-yes" name="r31" value="yes">
+<input type="radio" id="r31-no"  name="r31" value="no">
+<input type="radio" id="r31-na"  name="r31" value="na">
+<input type="radio" id="r32-yes" name="r32" value="yes">
+<input type="radio" id="r32-no"  name="r32" value="no">
+<input type="radio" id="r32-na"  name="r32" value="na">
+<input type="radio" id="r33-yes" name="r33" value="yes">
+<input type="radio" id="r33-no"  name="r33" value="no">
+<input type="radio" id="r33-na"  name="r33" value="na">
+<input type="radio" id="r34-yes" name="r34" value="yes">
+<input type="radio" id="r34-no"  name="r34" value="no">
+<input type="radio" id="r34-na"  name="r34" value="na">
+<input type="radio" id="r35-yes" name="r35" value="yes">
+<input type="radio" id="r35-no"  name="r35" value="no">
+<input type="radio" id="r35-na"  name="r35" value="na">
+<input type="radio" id="r36-yes" name="r36" value="yes">
+<input type="radio" id="r36-no"  name="r36" value="no">
+<input type="radio" id="r36-na"  name="r36" value="na">
+<input type="radio" id="r37-yes" name="r37" value="yes">
+<input type="radio" id="r37-no"  name="r37" value="no">
+<input type="radio" id="r37-na"  name="r37" value="na">
+<input type="radio" id="r38-yes" name="r38" value="yes">
+<input type="radio" id="r38-no"  name="r38" value="no">
+<input type="radio" id="r38-na"  name="r38" value="na">
+<input type="radio" id="r39-yes" name="r39" value="yes">
+<input type="radio" id="r39-no"  name="r39" value="no">
+<input type="radio" id="r39-na"  name="r39" value="na">
+<input type="radio" id="r40-yes" name="r40" value="yes">
+<input type="radio" id="r40-no"  name="r40" value="no">
+<input type="radio" id="r40-na"  name="r40" value="na">
+<input type="radio" id="r41-yes" name="r41" value="yes">
+<input type="radio" id="r41-no"  name="r41" value="no">
+<input type="radio" id="r41-na"  name="r41" value="na">
+<input type="radio" id="r42-yes" name="r42" value="yes">
+<input type="radio" id="r42-no"  name="r42" value="no">
+<input type="radio" id="r42-na"  name="r42" value="na">
+<input type="radio" id="r43-yes" name="r43" value="yes">
+<input type="radio" id="r43-no"  name="r43" value="no">
+<input type="radio" id="r43-na"  name="r43" value="na">
+
+<div class="stage-hdr">📌 قبل الزيارة</div>
+
+    <div class="criterion-card" id="c1">
+      <div class="card-top"><div class="card-num">1</div><div class="card-meta"><div class="card-section">قبل الزيارة / المعلومات</div><div class="card-text">الموقع مدرج على المنصات الإلكترونية الرئيسية (مثل خرائط جوجل، TripAdvisor، Webook، منصة Visit Madinah) مع تحديد صحيح للموقع على الخريطة</div></div></div>
+      <div class="tick-row">
+        <label for="r1-yes" class="tick-lbl yes">✓ نعم</label>
+        <label for="r1-no"  class="tick-lbl no">✗ لا</label>
+        <label for="r1-na"  class="tick-lbl na">— لا ينطبق</label>
+      </div>
+      <div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div>
+    </div>
+
+    <div class="criterion-card" id="c2">
+      <div class="card-top"><div class="card-num">2</div><div class="card-meta"><div class="card-section">قبل الزيارة / المعلومات</div><div class="card-text">المعلومات الإلكترونية على موقع الوجهة متاحة بالعربية والإنجليزية (نبذة، ساعات العمل، الرسوم، العنوان، معلومات التواصل، صور)</div></div></div>
+      <div class="tick-row">
+        <label for="r2-yes" class="tick-lbl yes">✓ نعم</label>
+        <label for="r2-no"  class="tick-lbl no">✗ لا</label>
+        <label for="r2-na"  class="tick-lbl na">— لا ينطبق</label>
+      </div>
+      <div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div>
+    </div>
+
+    <div class="criterion-card" id="c3">
+      <div class="card-top"><div class="card-num">3</div><div class="card-meta"><div class="card-section">قبل الزيارة / المعلومات</div><div class="card-text">ساعات التشغيل على أرض الواقع تطابق ما هو معلن إلكترونياً</div></div></div>
+      <div class="tick-row">
+        <label for="r3-yes" class="tick-lbl yes">✓ نعم</label>
+        <label for="r3-no"  class="tick-lbl no">✗ لا</label>
+        <label for="r3-na"  class="tick-lbl na">— لا ينطبق</label>
+      </div>
+      <div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div>
+    </div>
+
+    <div class="criterion-card" id="c4">
+      <div class="card-top"><div class="card-num">4</div><div class="card-meta"><div class="card-section">قبل الزيارة / الدعم</div><div class="card-text">تتوفر قناة واحدة على الأقل لدعم الزوار (هاتف / بريد إلكتروني / واتساب) ويتم الرد ضمن الإطار الزمني المُعلن</div></div></div>
+      <div class="tick-row">
+        <label for="r4-yes" class="tick-lbl yes">✓ نعم</label>
+        <label for="r4-no"  class="tick-lbl no">✗ لا</label>
+        <label for="r4-na"  class="tick-lbl na">— لا ينطبق</label>
+      </div>
+      <div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div>
+    </div>
+
+    <div class="criterion-card" id="c5">
+      <div class="card-top"><div class="card-num">5</div><div class="card-meta"><div class="card-section">قبل الزيارة / الحجز</div><div class="card-text">تجربة الحجز/التذاكر واضحة وسلسة: يمكن للزوار إتمام الحجز/الدفع مع استلام تأكيد الحجز</div></div></div>
+      <div class="tick-row">
+        <label for="r5-yes" class="tick-lbl yes">✓ نعم</label>
+        <label for="r5-no"  class="tick-lbl no">✗ لا</label>
+        <label for="r5-na"  class="tick-lbl na">— لا ينطبق</label>
+      </div>
+      <div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div>
+    </div>
+
+    <div class="criterion-card" id="c6">
+      <div class="card-top"><div class="card-num">6</div><div class="card-meta"><div class="card-section">قبل الزيارة / الحجز</div><div class="card-text">يمكن للزوار حجز الجولات الإرشادية مع توضيح الجدول الزمني واللغات والأسعار</div></div></div>
+      <div class="tick-row">
+        <label for="r6-yes" class="tick-lbl yes">✓ نعم</label>
+        <label for="r6-no"  class="tick-lbl no">✗ لا</label>
+        <label for="r6-na"  class="tick-lbl na">— لا ينطبق</label>
+      </div>
+      <div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div>
+    </div>
+
+    <div class="criterion-card" id="c7">
+      <div class="card-top"><div class="card-num">7</div><div class="card-meta"><div class="card-section">قبل الزيارة / المعلومات</div><div class="card-text">آداب وقواعد الزيارة موضحة بوضوح (اللباس، التصوير، السلوك) بالعربية والإنجليزية</div></div></div>
+      <div class="tick-row">
+        <label for="r7-yes" class="tick-lbl yes">✓ نعم</label>
+        <label for="r7-no"  class="tick-lbl no">✗ لا</label>
+        <label for="r7-na"  class="tick-lbl na">— لا ينطبق</label>
+      </div>
+      <div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div>
+    </div>
+
+    <div class="stage-hdr">📌 عند الوصول</div>
+
+    <div class="criterion-card" id="c8">
+      <div class="card-top"><div class="card-num">8</div><div class="card-meta"><div class="card-section">عند الوصول / الوصول</div><div class="card-text">اللوحات الإرشادية واضحة وتقود الزوار إلى المدخل الرئيسي</div></div></div>
+      <div class="tick-row">
+        <label for="r8-yes" class="tick-lbl yes">✓ نعم</label>
+        <label for="r8-no"  class="tick-lbl no">✗ لا</label>
+        <label for="r8-na"  class="tick-lbl na">— لا ينطبق</label>
+      </div>
+      <div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div>
+    </div>
+
+    <div class="criterion-card" id="c9">
+      <div class="card-top"><div class="card-num">9</div><div class="card-meta"><div class="card-section">عند الوصول / الوصول</div><div class="card-text">تتوفر منطقة مخصصة لإنزال الركاب (Drop-off) ومعلمة بوضوح</div></div></div>
+      <div class="tick-row">
+        <label for="r9-yes" class="tick-lbl yes">✓ نعم</label>
+        <label for="r9-no"  class="tick-lbl no">✗ لا</label>
+        <label for="r9-na"  class="tick-lbl na">— لا ينطبق</label>
+      </div>
+      <div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div>
+    </div>
+
+    <div class="criterion-card" id="c10">
+      <div class="card-top"><div class="card-num">10</div><div class="card-meta"><div class="card-section">عند الوصول / الوصول</div><div class="card-text">مواقف السيارات متاحة ونظيفة ومنظمة بوضوح مع لافتات ترشد الزوار</div></div></div>
+      <div class="tick-row">
+        <label for="r10-yes" class="tick-lbl yes">✓ نعم</label>
+        <label for="r10-no"  class="tick-lbl no">✗ لا</label>
+        <label for="r10-na"  class="tick-lbl na">— لا ينطبق</label>
+      </div>
+      <div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div>
+    </div>
+
+    <div class="criterion-card" id="c11">
+      <div class="card-top"><div class="card-num">11</div><div class="card-meta"><div class="card-section">عند الوصول / الوصول</div><div class="card-text">تتوفر مسارات ميسّرة من المواقف إلى المدخل آمنة ومريحة (تخدم أصحاب الهمم)</div></div></div>
+      <div class="tick-row">
+        <label for="r11-yes" class="tick-lbl yes">✓ نعم</label>
+        <label for="r11-no"  class="tick-lbl no">✗ لا</label>
+        <label for="r11-na"  class="tick-lbl na">— لا ينطبق</label>
+      </div>
+      <div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div>
+    </div>
+
+    <div class="criterion-card" id="c12">
+      <div class="card-top"><div class="card-num">12</div><div class="card-meta"><div class="card-section">عند الوصول / الوصول</div><div class="card-text">تتوفر قناة دعم للزوار (مكتب استقبال / نقطة مساعدة / QR) بما في ذلك الدفع والتحقق عند الدخول</div></div></div>
+      <div class="tick-row">
+        <label for="r12-yes" class="tick-lbl yes">✓ نعم</label>
+        <label for="r12-no"  class="tick-lbl no">✗ لا</label>
+        <label for="r12-na"  class="tick-lbl na">— لا ينطبق</label>
+      </div>
+      <div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div>
+    </div>
+
+    <div class="criterion-card" id="c13">
+      <div class="card-top"><div class="card-num">13</div><div class="card-meta"><div class="card-section">عند الوصول / الوصول</div><div class="card-text">تتوفر وسائل تنقّل بين المستويات (سلالم، سلالم متحركة، مصاعد) لجميع الزوار</div></div></div>
+      <div class="tick-row">
+        <label for="r13-yes" class="tick-lbl yes">✓ نعم</label>
+        <label for="r13-no"  class="tick-lbl no">✗ لا</label>
+        <label for="r13-na"  class="tick-lbl na">— لا ينطبق</label>
+      </div>
+      <div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div>
+    </div>
+
+    <div class="stage-hdr">📌 أثناء الزيارة</div>
+
+    <div class="criterion-card" id="c14"><div class="card-top"><div class="card-num">14</div><div class="card-meta"><div class="card-section">الإرشاد والتوجيه</div><div class="card-text">لافتات التوجيه واضحة ومرئية وثنائية اللغة (عربي/إنجليزي) أثناء التجول في الموقع</div></div></div><div class="tick-row"><label for="r14-yes" class="tick-lbl yes">✓ نعم</label><label for="r14-no" class="tick-lbl no">✗ لا</label><label for="r14-na" class="tick-lbl na">— لا ينطبق</label></div><div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div></div>
+    <div class="criterion-card" id="c15"><div class="card-top"><div class="card-num">15</div><div class="card-meta"><div class="card-section">الموظفون</div><div class="card-text">سلوك فريق العمل ودود ومهتم وملم بالمحتوى ومجيد لعدة لغات</div></div></div><div class="tick-row"><label for="r15-yes" class="tick-lbl yes">✓ نعم</label><label for="r15-no" class="tick-lbl no">✗ لا</label><label for="r15-na" class="tick-lbl na">— لا ينطبق</label></div><div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div></div>
+    <div class="criterion-card" id="c16"><div class="card-top"><div class="card-num">16</div><div class="card-meta"><div class="card-section">الطوابير وراحة الانتظار</div><div class="card-text">تمت مراعاة راحة الزوار أثناء الانتظار (بداية/نهاية واضحة / مظلات)</div></div></div><div class="tick-row"><label for="r16-yes" class="tick-lbl yes">✓ نعم</label><label for="r16-no" class="tick-lbl no">✗ لا</label><label for="r16-na" class="tick-lbl na">— لا ينطبق</label></div><div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div></div>
+    <div class="criterion-card" id="c17"><div class="card-top"><div class="card-num">17</div><div class="card-meta"><div class="card-section">الأجواء والتفعيل</div><div class="card-text">الإضاءة والأجواء وعناصر الترفيه/التفعيل تخلق تجربة ممتعة</div></div></div><div class="tick-row"><label for="r17-yes" class="tick-lbl yes">✓ نعم</label><label for="r17-no" class="tick-lbl no">✗ لا</label><label for="r17-na" class="tick-lbl na">— لا ينطبق</label></div><div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div></div>
+    <div class="criterion-card" id="c18"><div class="card-top"><div class="card-num">18</div><div class="card-meta"><div class="card-section">تشغيل الأنشطة</div><div class="card-text">الأنشطة منظمة بشكل جيد (مواعيد واضحة، ضبط السعة، إرشادات السلامة)</div></div></div><div class="tick-row"><label for="r18-yes" class="tick-lbl yes">✓ نعم</label><label for="r18-no" class="tick-lbl no">✗ لا</label><label for="r18-na" class="tick-lbl na">— لا ينطبق</label></div><div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div></div>
+    <div class="criterion-card" id="c19"><div class="card-top"><div class="card-num">19</div><div class="card-meta"><div class="card-section">التجربة والمحتوى التفسيري</div><div class="card-text">محتوى التفسير/الشرح عالي الجودة (لوحات/صوت/مرشد) متوفر بالعربية والإنجليزية</div></div></div><div class="tick-row"><label for="r19-yes" class="tick-lbl yes">✓ نعم</label><label for="r19-no" class="tick-lbl no">✗ لا</label><label for="r19-na" class="tick-lbl na">— لا ينطبق</label></div><div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div></div>
+    <div class="criterion-card" id="c20"><div class="card-top"><div class="card-num">20</div><div class="card-meta"><div class="card-section">التجربة والمحتوى التفسيري</div><div class="card-text">المعارض منسقة ضمن قصة/سرد واضح ويتم الحفاظ عليها</div></div></div><div class="tick-row"><label for="r20-yes" class="tick-lbl yes">✓ نعم</label><label for="r20-no" class="tick-lbl no">✗ لا</label><label for="r20-na" class="tick-lbl na">— لا ينطبق</label></div><div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div></div>
+    <div class="criterion-card" id="c21"><div class="card-top"><div class="card-num">21</div><div class="card-meta"><div class="card-section">التجربة والمحتوى التفسيري</div><div class="card-text">الأصول التراثية الرئيسية محمية (لا تشويش بصري؛ لافتات منضبطة؛ إرشادات الحفاظ واضحة)</div></div></div><div class="tick-row"><label for="r21-yes" class="tick-lbl yes">✓ نعم</label><label for="r21-no" class="tick-lbl no">✗ لا</label><label for="r21-na" class="tick-lbl na">— لا ينطبق</label></div><div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div></div>
+    <div class="criterion-card" id="c22"><div class="card-top"><div class="card-num">22</div><div class="card-meta"><div class="card-section">الاعتناء بالحيوانات وسلامة الزوار</div><div class="card-text">في المواقع التي تتضمن حيوانات: يتم الاعتناء بها والتحقق من إجراءات سلامة الزوار</div></div></div><div class="tick-row"><label for="r22-yes" class="tick-lbl yes">✓ نعم</label><label for="r22-no" class="tick-lbl no">✗ لا</label><label for="r22-na" class="tick-lbl na">— لا ينطبق</label></div><div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div></div>
+    <div class="criterion-card" id="c23"><div class="card-top"><div class="card-num">23</div><div class="card-meta"><div class="card-section">التجربة / الأطعمة والمشروبات</div><div class="card-text">تتوفر خيارات متعددة من المقاهي/المطاعم داخل أو قريب من الموقع مع تنوع مناسب</div></div></div><div class="tick-row"><label for="r23-yes" class="tick-lbl yes">✓ نعم</label><label for="r23-no" class="tick-lbl no">✗ لا</label><label for="r23-na" class="tick-lbl na">— لا ينطبق</label></div><div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div></div>
+    <div class="criterion-card" id="c24"><div class="card-top"><div class="card-num">24</div><div class="card-meta"><div class="card-section">التجربة / الأطعمة والمشروبات</div><div class="card-text">جودة الأطعمة والمشروبات جيدة</div></div></div><div class="tick-row"><label for="r24-yes" class="tick-lbl yes">✓ نعم</label><label for="r24-no" class="tick-lbl no">✗ لا</label><label for="r24-na" class="tick-lbl na">— لا ينطبق</label></div><div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div></div>
+    <div class="criterion-card" id="c25"><div class="card-top"><div class="card-num">25</div><div class="card-meta"><div class="card-section">التجربة / الأطعمة والمشروبات</div><div class="card-text">تتوفر خيارات صحية أو خالية من المواد المثيرة للحساسية مع توفر التسميات المناسبة</div></div></div><div class="tick-row"><label for="r25-yes" class="tick-lbl yes">✓ نعم</label><label for="r25-no" class="tick-lbl no">✗ لا</label><label for="r25-na" class="tick-lbl na">— لا ينطبق</label></div><div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div></div>
+    <div class="criterion-card" id="c26"><div class="card-top"><div class="card-num">26</div><div class="card-meta"><div class="card-section">التجربة / التجزئة والعروض</div><div class="card-text">تتوفر منافذ بيع بالتجزئة تعرض مجموعة متنوعة من المنتجات عالية الجودة والموجهة لشرائح متعددة</div></div></div><div class="tick-row"><label for="r26-yes" class="tick-lbl yes">✓ نعم</label><label for="r26-no" class="tick-lbl no">✗ لا</label><label for="r26-na" class="tick-lbl na">— لا ينطبق</label></div><div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div></div>
+    <div class="criterion-card" id="c27"><div class="card-top"><div class="card-num">27</div><div class="card-meta"><div class="card-section">التجربة / التجزئة والعروض</div><div class="card-text">تتوفر خيارات دفع متنوعة (نقدي، بطاقة، محفظة إلكترونية) ومريحة للاستخدام</div></div></div><div class="tick-row"><label for="r27-yes" class="tick-lbl yes">✓ نعم</label><label for="r27-no" class="tick-lbl no">✗ لا</label><label for="r27-na" class="tick-lbl na">— لا ينطبق</label></div><div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div></div>
+    <div class="criterion-card" id="c28"><div class="card-top"><div class="card-num">28</div><div class="card-meta"><div class="card-section">التجربة / التجزئة والعروض</div><div class="card-text">تتوفر في المتاجر تذكارات مدينية و/أو مرتبطة بطابع الموقع</div></div></div><div class="tick-row"><label for="r28-yes" class="tick-lbl yes">✓ نعم</label><label for="r28-no" class="tick-lbl no">✗ لا</label><label for="r28-na" class="tick-lbl na">— لا ينطبق</label></div><div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div></div>
+    <div class="criterion-card" id="c29"><div class="card-top"><div class="card-num">29</div><div class="card-meta"><div class="card-section">التجربة / التجزئة والعروض</div><div class="card-text">ممارسات التسعير شفافة (تُعرض الأسعار؛ لا يوجد بيع ملحّ أو أساليب بيع مزعجة)</div></div></div><div class="tick-row"><label for="r29-yes" class="tick-lbl yes">✓ نعم</label><label for="r29-no" class="tick-lbl no">✗ لا</label><label for="r29-na" class="tick-lbl na">— لا ينطبق</label></div><div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div></div>
+    <div class="criterion-card" id="c30"><div class="card-top"><div class="card-num">30</div><div class="card-meta"><div class="card-section">المرافق / دورات المياه</div><div class="card-text">دورات المياه نظيفة وآمنة وميسرة، بإضاءة جيدة وأرضيات غير زلقة</div></div></div><div class="tick-row"><label for="r30-yes" class="tick-lbl yes">✓ نعم</label><label for="r30-no" class="tick-lbl no">✗ لا</label><label for="r30-na" class="tick-lbl na">— لا ينطبق</label></div><div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div></div>
+    <div class="criterion-card" id="c31"><div class="card-top"><div class="card-num">31</div><div class="card-meta"><div class="card-section">المرافق / النظافة</div><div class="card-text">تتوفر حاويات نفايات مغطاة ضمن نطاق رؤية الزائر وليست ممتلئة</div></div></div><div class="tick-row"><label for="r31-yes" class="tick-lbl yes">✓ نعم</label><label for="r31-no" class="tick-lbl no">✗ لا</label><label for="r31-na" class="tick-lbl na">— لا ينطبق</label></div><div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div></div>
+    <div class="criterion-card" id="c32"><div class="card-top"><div class="card-num">32</div><div class="card-meta"><div class="card-section">المرافق / النظافة</div><div class="card-text">نظافة الموقع العامة محافظة عليها (الممرات/الساحات/مناطق الجلوس خالية من المخلفات)</div></div></div><div class="tick-row"><label for="r32-yes" class="tick-lbl yes">✓ نعم</label><label for="r32-no" class="tick-lbl no">✗ لا</label><label for="r32-na" class="tick-lbl na">— لا ينطبق</label></div><div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div></div>
+    <div class="criterion-card" id="c33"><div class="card-top"><div class="card-num">33</div><div class="card-meta"><div class="card-section">المرافق / الراحة</div><div class="card-text">تتوفر أماكن جلوس/استراحة ويمكن الوصول إليها (بما في ذلك للكراسي المتحركة/عربات الأطفال)</div></div></div><div class="tick-row"><label for="r33-yes" class="tick-lbl yes">✓ نعم</label><label for="r33-no" class="tick-lbl no">✗ لا</label><label for="r33-na" class="tick-lbl na">— لا ينطبق</label></div><div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div></div>
+    <div class="criterion-card" id="c34"><div class="card-top"><div class="card-num">34</div><div class="card-meta"><div class="card-section">المرافق / الاتصال</div><div class="card-text">تتوفر خدمة Wi-Fi للزوار وتعمل بشكل موثوق</div></div></div><div class="tick-row"><label for="r34-yes" class="tick-lbl yes">✓ نعم</label><label for="r34-no" class="tick-lbl no">✗ لا</label><label for="r34-na" class="tick-lbl na">— لا ينطبق</label></div><div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div></div>
+    <div class="criterion-card" id="c35"><div class="card-top"><div class="card-num">35</div><div class="card-meta"><div class="card-section">المرافق / الصلاة</div><div class="card-text">أماكن الصلاة والوضوء نظيفة</div></div></div><div class="tick-row"><label for="r35-yes" class="tick-lbl yes">✓ نعم</label><label for="r35-no" class="tick-lbl no">✗ لا</label><label for="r35-na" class="tick-lbl na">— لا ينطبق</label></div><div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div></div>
+    <div class="criterion-card" id="c36"><div class="card-top"><div class="card-num">36</div><div class="card-meta"><div class="card-section">الراحة والتحكم بالحرارة (خارجية)</div><div class="card-text">تتوفر وسائل للتخفيف من الحرارة: نقاط استراحة مظللة على المسارات الرئيسية</div></div></div><div class="tick-row"><label for="r36-yes" class="tick-lbl yes">✓ نعم</label><label for="r36-no" class="tick-lbl no">✗ لا</label><label for="r36-na" class="tick-lbl na">— لا ينطبق</label></div><div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div></div>
+    <div class="criterion-card" id="c37"><div class="card-top"><div class="card-num">37</div><div class="card-meta"><div class="card-section">الراحة والتحكم بالحرارة (داخلية)</div><div class="card-text">يتم الحفاظ على درجة حرارة مناسبة داخل الموقع (التكييف/التهوية فعّالان في مناطق الزوار)</div></div></div><div class="tick-row"><label for="r37-yes" class="tick-lbl yes">✓ نعم</label><label for="r37-no" class="tick-lbl no">✗ لا</label><label for="r37-na" class="tick-lbl na">— لا ينطبق</label></div><div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div></div>
+    <div class="criterion-card" id="c38"><div class="card-top"><div class="card-num">38</div><div class="card-meta"><div class="card-section">إدارة الإزعاج (الضوضاء/الروائح)</div><div class="card-text">يتم التحكم في الضوضاء والروائح وإدارتها بشكل فعّال</div></div></div><div class="tick-row"><label for="r38-yes" class="tick-lbl yes">✓ نعم</label><label for="r38-no" class="tick-lbl no">✗ لا</label><label for="r38-na" class="tick-lbl na">— لا ينطبق</label></div><div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div></div>
+    <div class="criterion-card" id="c39"><div class="card-top"><div class="card-num">39</div><div class="card-meta"><div class="card-section">معلومات السلامة للأنشطة الخارجية</div><div class="card-text">تتوفر معلومات السلامة للأنشطة الخارجية (تحذيرات الطقس، أرقام الطوارئ، المناطق المحظورة)</div></div></div><div class="tick-row"><label for="r39-yes" class="tick-lbl yes">✓ نعم</label><label for="r39-no" class="tick-lbl no">✗ لا</label><label for="r39-na" class="tick-lbl na">— لا ينطبق</label></div><div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div></div>
+    <div class="criterion-card" id="c40"><div class="card-top"><div class="card-num">40</div><div class="card-meta"><div class="card-section">إدارة المخاطر والمناطق الخطرة</div><div class="card-text">المناطق الخطرة مسيطر عليها (تحديد المخاطر + حواجز: حواف، انحدارات، كهوف، مسطحات مائية)</div></div></div><div class="tick-row"><label for="r40-yes" class="tick-lbl yes">✓ نعم</label><label for="r40-no" class="tick-lbl no">✗ لا</label><label for="r40-na" class="tick-lbl na">— لا ينطبق</label></div><div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div></div>
+
+    <div class="stage-hdr">📌 المغادرة</div>
+
+    <div class="criterion-card" id="c41"><div class="card-top"><div class="card-num">41</div><div class="card-meta"><div class="card-section">المغادرة والخروج</div><div class="card-text">توجيهات الخروج ونقاط الالتقاء واضحة: لافتات ترشد الزوار من المناطق الرئيسية إلى المخارج</div></div></div><div class="tick-row"><label for="r41-yes" class="tick-lbl yes">✓ نعم</label><label for="r41-no" class="tick-lbl no">✗ لا</label><label for="r41-na" class="tick-lbl na">— لا ينطبق</label></div><div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div></div>
+    <div class="criterion-card" id="c42"><div class="card-top"><div class="card-num">42</div><div class="card-meta"><div class="card-section">المغادرة والخروج</div><div class="card-text">وجود الموظفين عند المخرج يدعم تجربة مغادرة إيجابية (توديع الزوار، طلب تعبئة استبيان رضا الزوار)</div></div></div><div class="tick-row"><label for="r42-yes" class="tick-lbl yes">✓ نعم</label><label for="r42-no" class="tick-lbl no">✗ لا</label><label for="r42-na" class="tick-lbl na">— لا ينطبق</label></div><div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div></div>
+    <div class="criterion-card" id="c43"><div class="card-top"><div class="card-num">43</div><div class="card-meta"><div class="card-section">قياس رضا الزوار</div><div class="card-text">تتوفر استبيانات ونماذج اقتراحات للزوار عند المخارج (رقمياً عبر QR و/أو نماذج ورقية مع أقلام وصناديق إيداع)</div></div></div><div class="tick-row"><label for="r43-yes" class="tick-lbl yes">✓ نعم</label><label for="r43-no" class="tick-lbl no">✗ لا</label><label for="r43-na" class="tick-lbl na">— لا ينطبق</label></div><div class="notes-row"><div class="note-wrap"><div class="note-lbl">الدليل / الملاحظة</div><textarea class="obs-ta" placeholder="ما الذي لاحظته؟..."></textarea></div><div class="note-wrap"><div class="note-lbl">تحسين مقترح</div><textarea class="imp-ta" placeholder="ما الذي يمكن تحسينه؟..."></textarea></div></div></div>
+
+</div><!-- end form-wrap -->
+
+<script>
+function updateStats() {
+  var yes = document.querySelectorAll('input[type="radio"][value="yes"]:checked').length;
+  var no  = document.querySelectorAll('input[type="radio"][value="no"]:checked').length;
+  var na  = document.querySelectorAll('input[type="radio"][value="na"]:checked').length;
+
+  document.getElementById('cnt-yes').textContent = yes;
+  document.getElementById('cnt-no').textContent  = no;
+  document.getElementById('cnt-na').textContent  = na;
+
+  var total = yes + no;
+  var bar = document.getElementById('pct-bar');
+  if (total > 0) {
+    var pct = Math.round((yes / total) * 100);
+    document.getElementById('pct-display').textContent = pct + '%';
+    bar.style.width = pct + '%';
+    if (pct >= 75) bar.style.background = 'linear-gradient(90deg,#28a745,#1a7a3c)';
+    else if (pct >= 50) bar.style.background = 'linear-gradient(90deg,#e6a817,#b8860b)';
+    else bar.style.background = 'linear-gradient(90deg,#e57373,#c0392b)';
+  } else {
+    document.getElementById('pct-display').textContent = '— %';
+    bar.style.width = '0%';
+  }
+}
+
+// iOS Safari fix: labels intercept touch; the radio input never fires 'change'.
+// Solution: listen for clicks on the LABELS themselves, then defer to let the
+// browser check the radio, then read the new state.
+function handleLabelClick() {
+  setTimeout(updateStats, 50);
+}
+
+// Attach to every tick label (the visible buttons)
+document.querySelectorAll('.tick-lbl').forEach(function(lbl) {
+  lbl.addEventListener('click', handleLabelClick);
+  lbl.addEventListener('touchend', handleLabelClick, { passive: true });
+});
+
+// Also keep change listeners on radios as a fallback for non-iOS browsers
+document.querySelectorAll('input[type="radio"]').forEach(function(r) {
+  r.addEventListener('change', updateStats);
+});
+</script>
+</body>
+</html>
